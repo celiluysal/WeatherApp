@@ -9,8 +9,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface WeatherDaoInterface {
-    //@GET("data/2.5/forecast")
-    @GET("/data/2.5/forecast?lat=40.7848&lon=30.3947&appid=3f7d5d48bbd7ba82b28146325e18ff7a")
-    //Call<WeatherResponse> getWeatherData(@Query("lat") double lat,@Query("lon") double lon,@Query("appid") String apiKey);
-    Call<WeatherResponse> getWeatherData();
+    @GET("data/2.5/forecast")
+    //@GET("/data/2.5/forecast?lat=40.7848&lon=30.3947&appid=3f7d5d48bbd7ba82b28146325e18ff7a")
+    Call<WeatherResponse> getWeatherData(@Query("lat") double lat,@Query("lon") double lon,@Query("appid") String apiKey);
+    //Call<WeatherResponse> getWeatherData();
 }
