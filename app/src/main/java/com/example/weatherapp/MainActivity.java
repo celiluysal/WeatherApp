@@ -1,38 +1,27 @@
 package com.example.weatherapp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.weatherapp.DashBoard.DashBoardFragment;
-import com.example.weatherapp.DashBoard.ForecastRecyclerViewAdapter;
 import com.example.weatherapp.PlaceApi.PlaceResponse;
 import com.example.weatherapp.Retrofit.PlaceApiUtils;
 import com.example.weatherapp.Retrofit.PlaceDaoInterface;
 import com.example.weatherapp.Retrofit.WeatherApiUtils;
 import com.example.weatherapp.Retrofit.WeatherDaoInterface;
 import com.example.weatherapp.Search.SearchFragment;
-import com.example.weatherapp.WeatherApi.City;
 
 import com.example.weatherapp.WeatherApi.WeatherResponse;
 
@@ -40,16 +29,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     private WeatherDaoInterface weatherDaoInterface;
     private PlaceDaoInterface placeDaoInterface;
 
-    private TextView textViewShow;
-    private Button buttonCalistir;
+    private String isim;
 
 
     private Toolbar toolbar;
     private Fragment tempFragment;
+
+    private WeatherResponse wr;
 
 
     @SuppressLint("ResourceAsColor")
@@ -66,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         placeDaoInterface = PlaceApiUtils.getPlaceDaoInterface();
 
 
-
         toolbar.setTitle("konum");
         toolbar.setNavigationIcon(R.drawable.ic_menu);
         setSupportActionBar(toolbar);
@@ -75,14 +64,10 @@ public class MainActivity extends AppCompatActivity {
         tempFragment = new DashBoardFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentHolder, tempFragment).commit();
 
+        Log.e("a",getPackageName());
+        //weatherData(38.0787,26.9584);
+        //Log.e("isim",isim);
 
-       /* buttonCalistir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //weatherData(38.0787,26.9584);
-                placeData("serdi");
-            }
-        });*/
 
     }
 
@@ -117,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             Log.e("mesaj","diğer");
+            Log.e("isim",isim);
         }
 
         //super.onBackPressed();
@@ -127,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PlaceResponse> call, Response<PlaceResponse> response) {
                 String localeNames = response.body().getHits().get(0).getLocaleNames().getDefault().get(0);
-                textViewShow.setText(localeNames);
 
             }
 
@@ -138,17 +123,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    public void setIsim(WeatherResponse r){
+        isim = r.getCity().getName();
+        Log.e("isim",isim);
+
+    }
+
     public void weatherData(double lat, double lon){
         /*lat,lon,getString(R.string.apiKey)*/
         weatherDaoInterface.getWeatherData(lat,lon,getString(R.string.apiKey)).enqueue(new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                City city = response.body().getCity();
-                textViewShow.setText(city.getName());
-                Toast.makeText(getApplicationContext(),"calisti",Toast.LENGTH_LONG).show();
+                //if ()
 
-
-
+                //isim = response.body().getCity().getName();
+                setIsim(response.body());
+                //tempFragment = DashBoardFragment.newInstance(response.body());
+                //getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, tempFragment).commit();
+                //City city = response.body().getCity();
+                //Toast.makeText(getApplicationContext(),"calisti",Toast.LENGTH_LONG).show();
+                //Log.e("cit name",city.getName());
 
             }
 

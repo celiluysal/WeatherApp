@@ -25,6 +25,8 @@ public class SearchFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private View rootView;
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -59,6 +61,8 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_dash_board, container, false);
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
     }

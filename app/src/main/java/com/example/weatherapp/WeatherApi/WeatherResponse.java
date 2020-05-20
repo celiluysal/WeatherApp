@@ -4,7 +4,9 @@ package com.example.weatherapp.WeatherApi;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class WeatherResponse {
+import java.io.Serializable;
+
+public class WeatherResponse implements Serializable {
 
     @SerializedName("cod")
     @Expose
