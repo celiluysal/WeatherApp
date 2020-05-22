@@ -1,5 +1,6 @@
 package com.example.weatherapp.DashBoard;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
@@ -15,11 +16,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weatherapp.ForecastCardData;
 import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
+import com.example.weatherapp.Search.SearchFragment;
 import com.example.weatherapp.WeatherApi.WeatherResponse;
 
 import java.util.ArrayList;
@@ -31,12 +35,14 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
     private java.util.List<ForecastCardData> forecastCardDataList;
     private java.util.List<ForecastCardData> forecastFiveDayList;
     private WeatherResponse weatherResponse;
+    private FragmentActivity fragmentActivity;
 
 
 
-    public ForecastRecyclerViewAdapter(WeatherResponse weatherResponse, java.util.List<ForecastCardData> forecastCardDataList) {
+    public ForecastRecyclerViewAdapter(FragmentActivity fragmentActivity, WeatherResponse weatherResponse, java.util.List<ForecastCardData> forecastCardDataList) {
         this.weatherResponse = weatherResponse;
         this.forecastCardDataList = forecastCardDataList;
+        this.fragmentActivity = fragmentActivity;
 
         forecastFiveDayList = new ArrayList<>();
         selectFiveDay();
@@ -56,9 +62,14 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
 
         holder.textViewTimeOfDay.setText(forecastFiveDayList.get(position).getTime());
         holder.textViewDayOfWeek.setText(forecastFiveDayList.get(position).getDay());
-        holder.textViewTemp.setText(forecastFiveDayList.get(position).getTemperature());
-        holder.textViewTempMin.setText(forecastFiveDayList.get(position).getMinTemperature());
-        holder.textViewTempMax.setText(forecastFiveDayList.get(position).getMaxTemperature());
+        holder.textViewTemp.setText(forecastFiveDayList.get(position).getTemperature() + "°");
+
+        holder.textViewTempMin.setText(forecastFiveDayList.get(position).getMinTemperature() + "°");
+       //Log.e("a", String.valueOf(forecastCardDataList.get(position).getMinTemperature()));
+
+        holder.textViewTempMax.setText(forecastFiveDayList.get(position).getMaxTemperature() + "°");
+       /* Log.e("a", String.valueOf(forecastCardDataList.get(position).getMaxTemperature()));
+        Log.e("a","-------------------------------------");*/
 
         String uri = "@drawable/a"+ forecastFiveDayList.get(position).getIcon() +"_svg"; //imname without extension
         int imageResource = holder.view.getResources().getIdentifier(uri, null, "com.example.weatherapp");
@@ -66,16 +77,31 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
         holder.imageViewFivedaysBackground.setImageResource(imageResource);
         holder.imageViewFivedaysBackground.setAlpha(30);
 
-
         holder.cardViewOtherdays.setCardBackgroundColor(forecastFiveDayList.get(position).getColor());
 
+        holder.cardViewOtherdays.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //detach dashboard
+                Fragment fragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag("dashboard");
+                if(fragment != null){
+                    fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
+                }
+                //go fragment
+                fragmentActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder,new SearchFragment()).commit();
+
+
+
+            }
+        });
     }
+
 
     private void selectFiveDay(){
         for (ForecastCardData data:forecastCardDataList){
             if (data.getTime().equals("12:00")){
                 forecastFiveDayList.add(data);
-                Log.e("saat",data.getDay()+" - "+data.getTime());
+                //Log.e("saat",data.getDay()+" - "+data.getTime());
             }
         }
     }
@@ -107,6 +133,8 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
             imageViewFivedaysBackground = itemView.findViewById(R.id.imageViewFivedaysBackground);
             cardViewOtherdays = itemView.findViewById(R.id.cardViewOtherdays);
         }
+
+
     }
 }
 

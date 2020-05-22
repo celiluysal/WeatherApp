@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity{
 
         toolbar = findViewById(R.id.toolbar);
 
-
         weatherDaoInterface = WeatherApiUtils.getWeatherDaoInterface();
         placeDaoInterface = PlaceApiUtils.getPlaceDaoInterface();
 
@@ -62,12 +61,7 @@ public class MainActivity extends AppCompatActivity{
         getSupportActionBar().show();
 
         tempFragment = new DashBoardFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragmentHolder, tempFragment).commit();
-
-        Log.e("a",getPackageName());
-        //weatherData(38.0787,26.9584);
-        //Log.e("isim",isim);
-
+        getSupportFragmentManager().beginTransaction().add(R.id.fragmentHolder, tempFragment,"dashboard").commit();
 
     }
 
@@ -81,13 +75,17 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.search_item){
-            tempFragment = new SearchFragment();
+            //detach dashboard
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
+            if(fragment != null){
+                getSupportFragmentManager().beginTransaction().detach(fragment).commit();
+            }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, new SearchFragment()).commit();
             getSupportActionBar().hide();
         }
         else {
             Log.e("mesaj",item.toString());
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, tempFragment).commit();
         return true;
     }
 
@@ -97,7 +95,10 @@ public class MainActivity extends AppCompatActivity{
 
         if (f instanceof SearchFragment)
         {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, new DashBoardFragment()).commit();
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
+            if(fragment != null){
+                getSupportFragmentManager().beginTransaction().attach(fragment).commit();
+            }
             getSupportActionBar().show();
         }
         else {
@@ -124,38 +125,8 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-    public void setIsim(WeatherResponse r){
-        isim = r.getCity().getName();
-        Log.e("isim",isim);
-
-    }
-
-    public void weatherData(double lat, double lon){
-        /*lat,lon,getString(R.string.apiKey)*/
-        weatherDaoInterface.getWeatherData(lat,lon,getString(R.string.apiKey)).enqueue(new Callback<WeatherResponse>() {
-            @Override
-            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                //if ()
-
-                //isim = response.body().getCity().getName();
-                setIsim(response.body());
-                //tempFragment = DashBoardFragment.newInstance(response.body());
-                //getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, tempFragment).commit();
-                //City city = response.body().getCity();
-                //Toast.makeText(getApplicationContext(),"calisti",Toast.LENGTH_LONG).show();
-                //Log.e("cit name",city.getName());
-
-            }
-
-            @Override
-            public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(),"onFailure",Toast.LENGTH_LONG).show();
-                Log.e("onfailure",t.getLocalizedMessage());
 
 
-            }
-        });
 
-    }
 
 }

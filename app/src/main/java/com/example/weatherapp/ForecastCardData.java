@@ -1,10 +1,10 @@
 package com.example.weatherapp;
 
 public class ForecastCardData {
-    private String temperature;
-    private String minTemperature;
-    private String maxTemperature;
-    private String humidity;
+    private int temperature;
+    private int minTemperature;
+    private int maxTemperature;
+    private int humidity;
     private String weatherInfo;
     private String icon;
     private String time;
@@ -14,35 +14,35 @@ public class ForecastCardData {
     public ForecastCardData() {
     }
 
-    public String getTemperature() {
+    public int getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(String temperature) {
+    public void setTemperature(int temperature) {
         this.temperature = temperature;
     }
 
-    public String getMinTemperature() {
+    public int getMinTemperature() {
         return minTemperature;
     }
 
-    public void setMinTemperature(String minTemperature) {
+    public void setMinTemperature(int minTemperature) {
         this.minTemperature = minTemperature;
     }
 
-    public String getMaxTemperature() {
+    public int getMaxTemperature() {
         return maxTemperature;
     }
 
-    public void setMaxTemperature(String maxTemperature) {
+    public void setMaxTemperature(int maxTemperature) {
         this.maxTemperature = maxTemperature;
     }
 
-    public String getHumidity() {
+    public int getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(String humidity) {
+    public void setHumidity(int humidity) {
         this.humidity = humidity;
     }
 

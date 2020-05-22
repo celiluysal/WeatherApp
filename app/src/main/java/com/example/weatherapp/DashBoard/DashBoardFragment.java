@@ -23,10 +23,13 @@ import com.example.weatherapp.ForecastCardData;
 import com.example.weatherapp.R;
 import com.example.weatherapp.Retrofit.WeatherApiUtils;
 import com.example.weatherapp.Retrofit.WeatherDaoInterface;
+import com.example.weatherapp.Search.SearchFragment;
 import com.example.weatherapp.WeatherApi.City;
+import com.example.weatherapp.WeatherApi.List;
 import com.example.weatherapp.WeatherApi.WeatherResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -126,7 +129,7 @@ public class DashBoardFragment extends Fragment {
     private void setTodayCard(ForecastCardData data){
 
         progressBarToday.setVisibility(ProgressBar.INVISIBLE);
-        textViewTemperature.setText(data.getTemperature());
+        textViewTemperature.setText(data.getTemperature() + "°");
 
         String uri = "@drawable/a"+ data.getIcon() +"_svg"; //imname without extension
         int imageResource = getResources().getIdentifier(uri, null, "com.example.weatherapp");
@@ -134,12 +137,48 @@ public class DashBoardFragment extends Fragment {
         imageViewTodayBackground.setImageResource(imageResource);
         imageViewTodayBackground.setAlpha(10);
 
-
         textViewWeatherInfo.setText(data.getWeatherInfo());
-        textViewHumidity.setText(data.getHumidity());
+        textViewHumidity.setText("%"+data.getHumidity());
         cardViewToday.setCardBackgroundColor(data.getColor());
 
 
+    }
+
+    private void setMinMax(java.util.List<ForecastCardData> dataList){
+        java.util.List<Integer> temps = new ArrayList<>();
+        int[][] daysMinMax = new int[6][2];
+
+        int counter = 0;
+        String tmpDay = dataList.get(0).getDay();
+        for (int i=0;i<dataList.size();i++){
+            if (dataList.get(i).getDay().equals(tmpDay)) {
+                temps.add(dataList.get(i).getTemperature());
+            }
+            else {
+                daysMinMax[counter][0] = Collections.min(temps);
+                daysMinMax[counter][1] = Collections.max(temps);
+                temps.clear();
+                counter++;
+                tmpDay = dataList.get(i).getDay();
+            }
+
+            if (i == dataList.size()-1){
+                daysMinMax[counter][0] = Collections.min(temps);
+                daysMinMax[counter][1] = Collections.max(temps);
+            }
+        }
+        counter = 0;
+        tmpDay = dataList.get(0).getDay();
+        for (ForecastCardData data:dataList) {
+            if (!data.getDay().equals(tmpDay)) {
+                counter++;
+                tmpDay = data.getDay();
+            }
+            else{
+                data.setMinTemperature(daysMinMax[counter][0]);
+                data.setMaxTemperature(daysMinMax[counter][1]);
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -186,20 +225,16 @@ public class DashBoardFragment extends Fragment {
             sd = new SimpleDateFormat("HH:mm", new Locale("tr"));
             data.setTime(sd.format(time));
 
+            data.setTemperature((int) Math.round(list.getMain().getTemp()));
 
-            data.setTemperature(String.valueOf(Math.round(
-                    list.getMain().getTemp()))+"°");
-            data.setMinTemperature(String.valueOf(Math.round(
-                    list.getMain().getTempMin()))+"°");
-            data.setMaxTemperature(String.valueOf(Math.round(
-                    list.getMain().getTempMax()))+"°");
-            data.setHumidity("%"+String.valueOf(Math.round(
-                    list.getMain().getHumidity())));
+            data.setHumidity((int) Math.round(list.getMain().getHumidity()));
             data.setIcon(list.getWeather().get(0).getIcon());
             data.setWeatherInfo(list.getWeather().get(0).getDescription());
 
             forecastCardDataList.add(data);
+
         }
+        setMinMax(forecastCardDataList);
     }
 
 
@@ -213,7 +248,9 @@ public class DashBoardFragment extends Fragment {
                 fillData(response.body());
                 setTodayCard(forecastCardDataList.get(0));
 
-                forecastRecyclerViewAdapter = new ForecastRecyclerViewAdapter(response.body(),forecastCardDataList);
+
+
+                forecastRecyclerViewAdapter = new ForecastRecyclerViewAdapter(getActivity(), response.body(),forecastCardDataList);
                 recyclerView.setAdapter(forecastRecyclerViewAdapter);
             }
 
