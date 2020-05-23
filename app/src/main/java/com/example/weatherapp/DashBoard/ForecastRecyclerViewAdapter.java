@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.weatherapp.Details.DetailsFragment;
 import com.example.weatherapp.ForecastCardData;
 import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
@@ -78,6 +79,9 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
         holder.imageViewFivedaysBackground.setAlpha(30);
 
         holder.cardViewOtherdays.setCardBackgroundColor(forecastFiveDayList.get(position).getColor());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            holder.cardViewOtherdays.setOutlineSpotShadowColor(forecastFiveDayList.get(position).getColor());
+        }
 
         holder.cardViewOtherdays.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,9 +92,7 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
                     fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
                 }
                 //go fragment
-                fragmentActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder,new SearchFragment()).commit();
-
-
+                fragmentActivity.getSupportFragmentManager().beginTransaction().add(R.id.fragmentHolder, DetailsFragment.newInstance(forecastCardDataList) ,"details").commit();
 
             }
         });

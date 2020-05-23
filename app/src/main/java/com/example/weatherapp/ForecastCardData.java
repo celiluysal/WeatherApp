@@ -1,6 +1,8 @@
 package com.example.weatherapp;
 
-public class ForecastCardData {
+import java.io.Serializable;
+
+public class ForecastCardData implements Serializable {
     private int temperature;
     private int minTemperature;
     private int maxTemperature;

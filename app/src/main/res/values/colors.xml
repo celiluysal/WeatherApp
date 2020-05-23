@@ -3,4 +3,16 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+
+    <color name="color_day1">#B60035</color>
+    <color name="color_day2">#60D394</color>
+    <color name="color_day3">#F45B69</color>
+    <color name="color_day4">#642C96</color>
+    <color name="color_day5">#FFD23F</color>
+    <color name="color_day6">#D43C1F</color>
+    <color name="color_day7">#30A9FF</color>
+
+
+
+
 </resources>

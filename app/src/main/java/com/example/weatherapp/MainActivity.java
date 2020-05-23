@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.weatherapp.DashBoard.DashBoardFragment;
+import com.example.weatherapp.Details.DetailsFragment;
 import com.example.weatherapp.PlaceApi.PlaceResponse;
 import com.example.weatherapp.Retrofit.PlaceApiUtils;
 import com.example.weatherapp.Retrofit.PlaceDaoInterface;
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity{
             if(fragment != null){
                 getSupportFragmentManager().beginTransaction().detach(fragment).commit();
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, new SearchFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, new SearchFragment(),"search").commit();
             getSupportActionBar().hide();
         }
         else {
@@ -95,15 +96,26 @@ public class MainActivity extends AppCompatActivity{
 
         if (f instanceof SearchFragment)
         {
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("search");
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
             if(fragment != null){
                 getSupportFragmentManager().beginTransaction().attach(fragment).commit();
             }
             getSupportActionBar().show();
         }
+        else if (f instanceof DetailsFragment){
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("details");
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
+            if(fragment != null){
+                getSupportFragmentManager().beginTransaction().attach(fragment).commit();
+            }
+
+        }
         else {
             Log.e("mesaj","diğer");
-            Log.e("isim",isim);
+
         }
 
         //super.onBackPressed();

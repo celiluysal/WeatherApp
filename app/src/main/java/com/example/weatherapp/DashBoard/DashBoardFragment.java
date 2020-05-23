@@ -142,10 +142,12 @@ public class DashBoardFragment extends Fragment {
         cardViewToday.setCardBackgroundColor(data.getColor());
 
 
+
     }
 
     private void setMinMax(java.util.List<ForecastCardData> dataList){
         java.util.List<Integer> temps = new ArrayList<>();
+        java.util.List<java.util.List<Integer>> tempsOfDays = new ArrayList<>();
         int[][] daysMinMax = new int[6][2];
 
         int counter = 0;
@@ -155,16 +157,21 @@ public class DashBoardFragment extends Fragment {
                 temps.add(dataList.get(i).getTemperature());
             }
             else {
-                daysMinMax[counter][0] = Collections.min(temps);
-                daysMinMax[counter][1] = Collections.max(temps);
+                //tempsOfDays.add(temps);
+                if (temps != null) {
+                    daysMinMax[counter][0] = Collections.min(temps);
+                    daysMinMax[counter][1] = Collections.max(temps);
+                }
                 temps.clear();
                 counter++;
                 tmpDay = dataList.get(i).getDay();
             }
 
             if (i == dataList.size()-1){
-                daysMinMax[counter][0] = Collections.min(temps);
-                daysMinMax[counter][1] = Collections.max(temps);
+                if (temps.size() != 0) {
+                    daysMinMax[counter][0] = Collections.min(temps);
+                    daysMinMax[counter][1] = Collections.max(temps);
+                }
             }
         }
         counter = 0;
@@ -197,28 +204,28 @@ public class DashBoardFragment extends Fragment {
 
             switch (data.getDay()){
                 case "Pazartesi":
-                    data.setColor(Color.parseColor("#c70039"));
+                    data.setColor(getResources().getColor(R.color.color_day1));
                     break;
                 case "Salı":
-                    data.setColor(Color.parseColor("#f17808"));
+                    data.setColor(getResources().getColor(R.color.color_day2));
                     break;
                 case "Çarşamba":
-                    data.setColor(Color.parseColor("#5fdde5"));
+                    data.setColor(getResources().getColor(R.color.color_day3));
                     break;
                 case "Perşembe":
-                    data.setColor(Color.parseColor("#5c2a9d"));
+                    data.setColor(getResources().getColor(R.color.color_day4));
                     break;
                 case "Cuma":
-                    data.setColor(Color.parseColor("#ff5200"));
+                    data.setColor(getResources().getColor(R.color.color_day5));
                     break;
                 case "Cumartesi":
-                    data.setColor(Color.parseColor("#00a1ab"));
+                    data.setColor(getResources().getColor(R.color.color_day6));
                     break;
                 case "Pazar":
-                    data.setColor(Color.parseColor("#f4a548"));
+                    data.setColor(getResources().getColor(R.color.color_day7));
                     break;
                 default:
-                    data.setColor(Color.parseColor("#c70039"));
+                    data.setColor(getResources().getColor(R.color.color_day1));
                     break;
             }
 
