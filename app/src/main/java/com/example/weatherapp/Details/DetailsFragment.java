@@ -1,5 +1,7 @@
 package com.example.weatherapp.Details;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.cardview.widget.CardView;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,6 +47,8 @@ public class DetailsFragment extends Fragment {
     private FloatingActionButton floatingActionButtonClose;
     private TextView textViewDayOfWeek, textViewTemp, textViewTempMin, textViewTempMax;
     private ImageView imageViewForecastIcon;
+    private CardView cardViewHourOfDayContainer;
+    private FrameLayout frameLayout;
 
     private List<ForecastCardData> forecastCardDataList;
 
@@ -56,7 +61,7 @@ public class DetailsFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     //* @param param2 Parameter 2.
      * @return A new instance of fragment DetailsFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -85,36 +90,47 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         rootView = inflater.inflate(R.layout.fragment_details, container, false);
-
-         floatingActionButtonClose = rootView.findViewById(R.id.floatingActionButtonClose);
+        rootView = inflater.inflate(R.layout.fragment_details, container, false);
+        floatingActionButtonClose = rootView.findViewById(R.id.floatingActionButtonClose);
         cardViewDetails = rootView.findViewById(R.id.cardViewDetails);
         textViewDayOfWeek = rootView.findViewById(R.id.textViewDayOfWeek);
         textViewTemp = rootView.findViewById(R.id.textViewTemp);
         textViewTempMin = rootView.findViewById(R.id.textViewTempMin);
         textViewTempMax = rootView.findViewById(R.id.textViewTempMax);
         imageViewForecastIcon = rootView.findViewById(R.id.imageViewForecastIcon);
+        cardViewHourOfDayContainer = rootView.findViewById(R.id.cardViewHourOfDayContainer);
+        frameLayout = rootView.findViewById(R.id.frameLayout);
 
         recyclerView = rootView.findViewById(R.id.recyclerViewHourOfDay);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
-        detailsRecyclerViewAdapter = new DetailsRecyclerViewAdapter();
+        detailsRecyclerViewAdapter = new DetailsRecyclerViewAdapter(getActivity(),forecastCardDataList);
         recyclerView.setAdapter(detailsRecyclerViewAdapter);
 
         setDetailsCard();
 
-
-         return rootView;
+        return rootView;
     }
 
+    @SuppressLint("Range")
     public void setDetailsCard(){
 
+        textViewDayOfWeek.setText(forecastCardDataList.get(0).getDay());
+        textViewTemp.setText(forecastCardDataList.get(0).getTemperature() + "°");
+        textViewTempMin.setText(forecastCardDataList.get(0).getMinTemperature() + "°");
+        textViewTempMin.setAlpha(30);
+        textViewTempMax.setText(forecastCardDataList.get(0).getMaxTemperature() + "°");
+        textViewTempMax.setAlpha(30);
+
+        String uri = "@drawable/a"+ forecastCardDataList.get(0).getIcon() +"_svg"; //imname without extension
+        int imageResource = getResources().getIdentifier(uri, null, "com.example.weatherapp");
+        imageViewForecastIcon.setImageResource(imageResource);
+
+        cardViewDetails.setCardBackgroundColor(forecastCardDataList.get(0).getColorDay());
 
 
-        String day = forecastCardDataList.get(0).getDay();
-        textViewDayOfWeek.setText(day);
-
+        //cardViewHourOfDayContainer.setCardBackgroundColor(Color.parseColor("#d3deff"));
 
         floatingActionButtonClose.setOnClickListener(new View.OnClickListener() {
             @Override

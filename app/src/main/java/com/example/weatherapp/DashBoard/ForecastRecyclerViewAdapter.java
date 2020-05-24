@@ -1,16 +1,10 @@
 package com.example.weatherapp.DashBoard;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.icu.text.SimpleDateFormat;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,26 +16,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weatherapp.Details.DetailsFragment;
 import com.example.weatherapp.ForecastCardData;
-import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
-import com.example.weatherapp.Search.SearchFragment;
-import com.example.weatherapp.WeatherApi.WeatherResponse;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRecyclerViewAdapter.ForecastCardHolder> {
     private java.util.List<ForecastCardData> forecastCardDataList;
     private java.util.List<ForecastCardData> forecastFiveDayList;
-    private WeatherResponse weatherResponse;
     private FragmentActivity fragmentActivity;
 
 
 
-    public ForecastRecyclerViewAdapter(FragmentActivity fragmentActivity, WeatherResponse weatherResponse, java.util.List<ForecastCardData> forecastCardDataList) {
-        this.weatherResponse = weatherResponse;
+    public ForecastRecyclerViewAdapter(FragmentActivity fragmentActivity, java.util.List<ForecastCardData> forecastCardDataList) {
         this.forecastCardDataList = forecastCardDataList;
         this.fragmentActivity = fragmentActivity;
 
@@ -78,9 +65,9 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
         holder.imageViewFivedaysBackground.setImageResource(imageResource);
         holder.imageViewFivedaysBackground.setAlpha(30);
 
-        holder.cardViewOtherdays.setCardBackgroundColor(forecastFiveDayList.get(position).getColor());
+        holder.cardViewOtherdays.setCardBackgroundColor(forecastFiveDayList.get(position).getColorDay());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            holder.cardViewOtherdays.setOutlineSpotShadowColor(forecastFiveDayList.get(position).getColor());
+            holder.cardViewOtherdays.setOutlineSpotShadowColor(forecastFiveDayList.get(position).getColorDay());
         }
 
         holder.cardViewOtherdays.setOnClickListener(new View.OnClickListener() {
@@ -88,11 +75,14 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
             public void onClick(View v) {
                 //detach dashboard
                 Fragment fragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag("dashboard");
-                if(fragment != null){
+                /*if(fragment != null){
                     fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
-                }
+                }*/
                 //go fragment
-                fragmentActivity.getSupportFragmentManager().beginTransaction().add(R.id.fragmentHolder, DetailsFragment.newInstance(forecastCardDataList) ,"details").commit();
+                fragmentActivity.getSupportFragmentManager()
+                        .beginTransaction().add(R.id.fragmentHolder,
+                        DetailsFragment.newInstance(selectOneDay((String) holder.textViewDayOfWeek.getText())),"details")
+                        .commit();
 
             }
         });
@@ -106,6 +96,16 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
                 //Log.e("saat",data.getDay()+" - "+data.getTime());
             }
         }
+    }
+
+    private List<ForecastCardData> selectOneDay(String day){
+        List<ForecastCardData> tempList = new ArrayList<>();
+        for (ForecastCardData data:forecastCardDataList){
+            if (data.getDay().equals(day)){
+                tempList.add(data);
+            }
+        }
+        return tempList;
     }
 
     @Override

@@ -11,7 +11,9 @@ public class ForecastCardData implements Serializable {
     private String icon;
     private String time;
     private String day;
-    private int color;
+    private int colorDay;
+    private int colorHour;
+
 
     public ForecastCardData() {
     }
@@ -80,11 +82,19 @@ public class ForecastCardData implements Serializable {
         this.day = day;
     }
 
-    public int getColor() {
-        return color;
+    public int getColorDay() {
+        return colorDay;
     }
 
-    public void setColor(int color) {
-        this.color = color;
+    public void setColorDay(int colorDay) {
+        this.colorDay = colorDay;
+    }
+
+    public int getColorHour() {
+        return colorHour;
+    }
+
+    public void setColorHour(int colorHour) {
+        this.colorHour = colorHour;
     }
 }

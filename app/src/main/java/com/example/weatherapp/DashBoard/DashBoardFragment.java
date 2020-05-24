@@ -1,6 +1,5 @@
 package com.example.weatherapp.DashBoard;
 
-import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,12 +19,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.weatherapp.ForecastCardData;
+import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
 import com.example.weatherapp.Retrofit.WeatherApiUtils;
 import com.example.weatherapp.Retrofit.WeatherDaoInterface;
-import com.example.weatherapp.Search.SearchFragment;
 import com.example.weatherapp.WeatherApi.City;
-import com.example.weatherapp.WeatherApi.List;
 import com.example.weatherapp.WeatherApi.WeatherResponse;
 
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ public class DashBoardFragment extends Fragment {
     private RecyclerView recyclerView;
     private ForecastRecyclerViewAdapter forecastRecyclerViewAdapter;
 
-    private TextView textViewTemperature,textViewWeatherInfo,textViewHumidity;
+    private TextView textViewTemperature,textViewWeatherInfo,textViewHumidity, textViewToolbarTitle;
     private ImageView imageViewIcon,imageViewTodayBackground;
     private CardView cardViewToday;
     private ProgressBar progressBarToday,progressBarOtherdays;
@@ -107,6 +105,8 @@ public class DashBoardFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_dash_board, container, false);
         weatherDaoInterface = WeatherApiUtils.getWeatherDaoInterface();
 
+        textViewToolbarTitle = rootView.findViewById(R.id.textViewToolbarTitle);
+
         textViewTemperature =  rootView.findViewById(R.id.textViewTemperature);
         imageViewIcon = rootView.findViewById(R.id.imageViewIcon);
         imageViewTodayBackground = rootView.findViewById(R.id.imageViewTodayBackground);
@@ -121,7 +121,10 @@ public class DashBoardFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
 
 
+        //textViewToolbarTitle.setText("asd");
         weatherData(38.0787,26.9584);
+
+
 
         return rootView;
     }
@@ -139,9 +142,17 @@ public class DashBoardFragment extends Fragment {
 
         textViewWeatherInfo.setText(data.getWeatherInfo());
         textViewHumidity.setText("%"+data.getHumidity());
-        cardViewToday.setCardBackgroundColor(data.getColor());
+        cardViewToday.setCardBackgroundColor(data.getColorDay());
 
-
+        cardViewToday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("dashboard");
+                if(fragment != null){
+                    //((MainActivity)getActivity()).refreshDashBoard();
+                }
+            }
+        });
 
     }
 
@@ -177,11 +188,14 @@ public class DashBoardFragment extends Fragment {
         counter = 0;
         tmpDay = dataList.get(0).getDay();
         for (ForecastCardData data:dataList) {
-            if (!data.getDay().equals(tmpDay)) {
-                counter++;
-                tmpDay = data.getDay();
+            if (data.getDay().equals(tmpDay)) {
+                data.setMinTemperature(daysMinMax[counter][0]);
+                data.setMaxTemperature(daysMinMax[counter][1]);
             }
             else{
+                counter++;
+                tmpDay = data.getDay();
+
                 data.setMinTemperature(daysMinMax[counter][0]);
                 data.setMaxTemperature(daysMinMax[counter][1]);
             }
@@ -202,35 +216,65 @@ public class DashBoardFragment extends Fragment {
             sd = new SimpleDateFormat("EEEE", new Locale("tr"));
             data.setDay(sd.format(time));
 
+            sd = new SimpleDateFormat("HH:mm", new Locale("tr"));
+            data.setTime(sd.format(time));
+
             switch (data.getDay()){
                 case "Pazartesi":
-                    data.setColor(getResources().getColor(R.color.color_day1));
+                    data.setColorDay(getResources().getColor(R.color.color_day1));
                     break;
                 case "Salı":
-                    data.setColor(getResources().getColor(R.color.color_day2));
+                    data.setColorDay(getResources().getColor(R.color.color_day2));
                     break;
                 case "Çarşamba":
-                    data.setColor(getResources().getColor(R.color.color_day3));
+                    data.setColorDay(getResources().getColor(R.color.color_day3));
                     break;
                 case "Perşembe":
-                    data.setColor(getResources().getColor(R.color.color_day4));
+                    data.setColorDay(getResources().getColor(R.color.color_day4));
                     break;
                 case "Cuma":
-                    data.setColor(getResources().getColor(R.color.color_day5));
+                    data.setColorDay(getResources().getColor(R.color.color_day5));
                     break;
                 case "Cumartesi":
-                    data.setColor(getResources().getColor(R.color.color_day6));
+                    data.setColorDay(getResources().getColor(R.color.color_day6));
                     break;
                 case "Pazar":
-                    data.setColor(getResources().getColor(R.color.color_day7));
+                    data.setColorDay(getResources().getColor(R.color.color_day7));
                     break;
                 default:
-                    data.setColor(getResources().getColor(R.color.color_day1));
+                    data.setColorDay(getResources().getColor(R.color.color_day1));
                     break;
             }
 
-            sd = new SimpleDateFormat("HH:mm", new Locale("tr"));
-            data.setTime(sd.format(time));
+            switch (data.getTime()){
+                case "00:00":
+                    data.setColorHour(getResources().getColor(R.color.color_day1));
+                    break;
+                case "03:00":
+                    data.setColorHour(getResources().getColor(R.color.color_day2));
+                    break;
+                case "06:00":
+                    data.setColorHour(getResources().getColor(R.color.color_day3));
+                    break;
+                case "09:00":
+                    data.setColorHour(getResources().getColor(R.color.color_day4));
+                    break;
+                case "12:00":
+                    data.setColorHour(getResources().getColor(R.color.color_day5));
+                    break;
+                case "15:00":
+                    data.setColorHour(getResources().getColor(R.color.color_day6));
+                    break;
+                case "18:00":
+                    data.setColorHour(getResources().getColor(R.color.color_day7));
+                    break;
+                case "21:00":
+                    data.setColorHour(getResources().getColor(R.color.color_day7));
+                    break;
+                default:
+                    data.setColorHour(getResources().getColor(R.color.color_day1));
+                    break;
+            }
 
             data.setTemperature((int) Math.round(list.getMain().getTemp()));
 
@@ -256,9 +300,9 @@ public class DashBoardFragment extends Fragment {
                 setTodayCard(forecastCardDataList.get(0));
 
 
-
-                forecastRecyclerViewAdapter = new ForecastRecyclerViewAdapter(getActivity(), response.body(),forecastCardDataList);
+                forecastRecyclerViewAdapter = new ForecastRecyclerViewAdapter(getActivity(),forecastCardDataList);
                 recyclerView.setAdapter(forecastRecyclerViewAdapter);
+
             }
 
             @Override

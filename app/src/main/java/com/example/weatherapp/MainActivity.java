@@ -7,12 +7,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.example.weatherapp.DashBoard.DashBoardFragment;
@@ -34,10 +36,9 @@ public class MainActivity extends AppCompatActivity{
     private WeatherDaoInterface weatherDaoInterface;
     private PlaceDaoInterface placeDaoInterface;
 
-    private String isim;
-
 
     private Toolbar toolbar;
+    private FrameLayout frameLayout;
     private Fragment tempFragment;
 
     private WeatherResponse wr;
@@ -50,13 +51,14 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         toolbar = findViewById(R.id.toolbar);
+        frameLayout = findViewById(R.id.fragmentHolder);
 
         weatherDaoInterface = WeatherApiUtils.getWeatherDaoInterface();
         placeDaoInterface = PlaceApiUtils.getPlaceDaoInterface();
 
 
-        toolbar.setTitle("konum");
         toolbar.setNavigationIcon(R.drawable.ic_menu);
         setSupportActionBar(toolbar);
         getSupportActionBar().show();
@@ -120,6 +122,31 @@ public class MainActivity extends AppCompatActivity{
 
         //super.onBackPressed();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e("1","onresume");
+    }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        Log.e("1","onResumeFragments");
+    }
+
+    @Override
+    protected void onChildTitleChanged(Activity childActivity, CharSequence title) {
+        super.onChildTitleChanged(childActivity, title);
+        Log.e("1","onChildTitleChanged");
+    }
+
+    public void refreshDashBoard(){
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
+        getSupportFragmentManager().beginTransaction().detach(fragment).commit();
+        getSupportFragmentManager().beginTransaction().attach(fragment).commit();
+    }
+
 
     public void placeData(String query){
         placeDaoInterface.getPlaceData(query).enqueue(new Callback<PlaceResponse>() {
