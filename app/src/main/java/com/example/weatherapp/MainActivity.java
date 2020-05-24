@@ -34,6 +34,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity{
+    private static MainActivity instance;
+
     private WeatherDaoInterface weatherDaoInterface;
     private PlaceDaoInterface placeDaoInterface;
 
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity{
     private FrameLayout frameLayout;
     private Fragment tempFragment;
 
-    private WeatherResponse wr;
+    private Double lat, lon;
 
 
     @SuppressLint("ResourceAsColor")
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        instance = this;
 
 
         toolbar = findViewById(R.id.toolbar);
@@ -67,8 +70,12 @@ public class MainActivity extends AppCompatActivity{
         getSupportActionBar().show();
 
         //tempFragment = new DashBoardFragment();
-        tempFragment = DashBoardFragment.newInstance(38.0787,26.9584);
-        getSupportFragmentManager().beginTransaction().add(R.id.fragmentHolder, tempFragment,"dashboard").commit();
+
+
+        lat = 38.0787;
+        lon = 26.9584;
+        tempFragment = DashBoardFragment.newInstance(lat,lon);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, tempFragment,"dashboard").commit();
 
     }
 
@@ -85,9 +92,9 @@ public class MainActivity extends AppCompatActivity{
             //detach dashboard
             Fragment fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
             if(fragment != null){
-                getSupportFragmentManager().beginTransaction().detach(fragment).commit();
+                getSupportFragmentManager().beginTransaction().hide(fragment).commit();
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, new SearchFragment(),"search").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.fragmentHolder, new SearchFragment(),"search").commit();
             getSupportActionBar().hide();
         }
         else {
@@ -106,7 +113,7 @@ public class MainActivity extends AppCompatActivity{
             getSupportFragmentManager().beginTransaction().remove(fragment).commit();
             fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
             if(fragment != null){
-                getSupportFragmentManager().beginTransaction().attach(fragment).commit();
+                getSupportFragmentManager().beginTransaction().show(fragment).commit();
             }
             getSupportActionBar().show();
         }
@@ -120,11 +127,15 @@ public class MainActivity extends AppCompatActivity{
 
         }
         else {
-            Log.e("mesaj","diğer");
+            super.onBackPressed();
 
         }
 
         //super.onBackPressed();
+    }
+
+    public static MainActivity getInstance(){
+        return instance;
     }
 
     public void setToolbarTile(String tile){
@@ -132,28 +143,25 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void refreshDashBoard(){
+        Log.e("asd","refresh");
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
         if(fragment != null) {
             getSupportFragmentManager().beginTransaction().remove(fragment).commit();
         }
-        tempFragment = DashBoardFragment.newInstance(38.0787,26.9584);
+        tempFragment = DashBoardFragment.newInstance(lat,lon);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, tempFragment,"dashboard").commit();
     }
 
+    public void setCoordAndShow(Double lat, Double lon){
+        this.lat = lat;
+        this.lon = lon;
 
-    public void placeData(String query){
-        placeDaoInterface.getPlaceData(query).enqueue(new Callback<PlaceResponse>() {
-            @Override
-            public void onResponse(Call<PlaceResponse> call, Response<PlaceResponse> response) {
-                String localeNames = response.body().getHits().get(0).getLocaleNames().getDefault().get(0);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("search");
+        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 
-            }
+        getSupportActionBar().show();
+        refreshDashBoard();
 
-            @Override
-            public void onFailure(Call<PlaceResponse> call, Throwable t) {
-                Log.e("onfailure",t.getLocalizedMessage());
-            }
-        });
     }
 
 

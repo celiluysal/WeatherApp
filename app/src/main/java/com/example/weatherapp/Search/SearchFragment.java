@@ -3,11 +3,13 @@ package com.example.weatherapp.Search;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.example.weatherapp.PlaceApi.PlaceResponse;
 import com.example.weatherapp.R;
@@ -35,6 +37,10 @@ public class SearchFragment extends Fragment {
 
     private PlaceDaoInterface placeDaoInterface;
     private View rootView;
+    private SearchView searchView;
+    private RecyclerView recyclerView;
+    private SearchRecyclerVivewAdapter searchRecyclerVivewAdapter;
+
 
     public SearchFragment() {
         // Required empty public constructor
@@ -70,11 +76,31 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_dash_board, container, false);
+        rootView = inflater.inflate(R.layout.fragment_search, container, false);
         placeDaoInterface = PlaceApiUtils.getPlaceDaoInterface();
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        searchView = rootView.findViewById(R.id.searchView);
+        recyclerView = rootView.findViewById(R.id.recyclerViewSearchResults);
+        recyclerView.setHasFixedSize(true);
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                placeData(newText);
+                return true;
+            }
+        });
+
+
+
+
+        return rootView;
     }
 
     public void placeData(String query){
@@ -82,6 +108,11 @@ public class SearchFragment extends Fragment {
             @Override
             public void onResponse(Call<PlaceResponse> call, Response<PlaceResponse> response) {
                 //String localeNames = response.body().getHits().get(0).getLocaleNames().getDefault().get(0);
+                //Log.e("2",localeNames);
+                if (response.body().getHits() != null) {
+                    searchRecyclerVivewAdapter = new SearchRecyclerVivewAdapter(response.body().getHits());
+                    recyclerView.setAdapter(searchRecyclerVivewAdapter);
+                }
 
             }
 
