@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.weatherapp.DashBoard.DashBoardFragment;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity{
 
 
     private Toolbar toolbar;
+    private TextView textViewToolbarTitle;
     private FrameLayout frameLayout;
     private Fragment tempFragment;
 
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity{
 
 
         toolbar = findViewById(R.id.toolbar);
+        textViewToolbarTitle = findViewById(R.id.textViewToolbarTitle);
         frameLayout = findViewById(R.id.fragmentHolder);
 
         weatherDaoInterface = WeatherApiUtils.getWeatherDaoInterface();
@@ -63,7 +66,8 @@ public class MainActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         getSupportActionBar().show();
 
-        tempFragment = new DashBoardFragment();
+        //tempFragment = new DashBoardFragment();
+        tempFragment = DashBoardFragment.newInstance(38.0787,26.9584);
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentHolder, tempFragment,"dashboard").commit();
 
     }
@@ -123,28 +127,17 @@ public class MainActivity extends AppCompatActivity{
         //super.onBackPressed();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e("1","onresume");
-    }
-
-    @Override
-    protected void onResumeFragments() {
-        super.onResumeFragments();
-        Log.e("1","onResumeFragments");
-    }
-
-    @Override
-    protected void onChildTitleChanged(Activity childActivity, CharSequence title) {
-        super.onChildTitleChanged(childActivity, title);
-        Log.e("1","onChildTitleChanged");
+    public void setToolbarTile(String tile){
+        textViewToolbarTitle.setText(tile);
     }
 
     public void refreshDashBoard(){
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
-        getSupportFragmentManager().beginTransaction().detach(fragment).commit();
-        getSupportFragmentManager().beginTransaction().attach(fragment).commit();
+        if(fragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
+        tempFragment = DashBoardFragment.newInstance(38.0787,26.9584);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, tempFragment,"dashboard").commit();
     }
 
 
@@ -162,10 +155,6 @@ public class MainActivity extends AppCompatActivity{
             }
         });
     }
-
-
-
-
 
 
 }

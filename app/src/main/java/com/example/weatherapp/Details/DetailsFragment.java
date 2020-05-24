@@ -140,7 +140,7 @@ public class DetailsFragment extends Fragment {
                 getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                 fragment = getActivity().getSupportFragmentManager().findFragmentByTag("dashboard");
                 if(fragment != null){
-                    getActivity().getSupportFragmentManager().beginTransaction().attach(fragment).commit();
+                    //getActivity().getSupportFragmentManager().beginTransaction().attach(fragment).commit();
                 }
             }
         });

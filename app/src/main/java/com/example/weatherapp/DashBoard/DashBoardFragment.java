@@ -1,6 +1,7 @@
 package com.example.weatherapp.DashBoard;
 
 import android.icu.text.SimpleDateFormat;
+import android.icu.util.TimeZone;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -9,6 +10,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,17 +45,18 @@ import retrofit2.Response;
 public class DashBoardFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String WEATHER_RESPONSE_KEY = "weatherResponse_key";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "lat";
+    private static final String ARG_PARAM2 = "lon";
 
     // TODO: Rename and change types of parameters
-    private WeatherResponse weatherResponse;
-    private String mParam2;
+    private Double lat;
+    private Double lon;
 
     private View rootView;
 
     private java.util.List<ForecastCardData> forecastCardDataList;
 
+    private SwipeRefreshLayout swipeRefreshDashboard;
     private RecyclerView recyclerView;
     private ForecastRecyclerViewAdapter forecastRecyclerViewAdapter;
 
@@ -82,10 +85,11 @@ public class DashBoardFragment extends Fragment {
      * @return A new instance of fragment DashBoardFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static DashBoardFragment newInstance(WeatherResponse param_weatherResponse) {
+    public static DashBoardFragment newInstance(Double _lat,Double _lon) {
         DashBoardFragment fragment = new DashBoardFragment();
         Bundle args = new Bundle();
-        args.putSerializable(WEATHER_RESPONSE_KEY, param_weatherResponse);
+        args.putDouble(ARG_PARAM1,_lat);
+        args.putDouble(ARG_PARAM2,_lon);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,9 +97,10 @@ public class DashBoardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*if (getArguments() != null) {
-            weatherResponse = (WeatherResponse) getArguments().getSerializable(WEATHER_RESPONSE_KEY);
-        }*/
+        if (getArguments() != null) {
+            lat = getArguments().getDouble(ARG_PARAM1);
+            lon = getArguments().getDouble(ARG_PARAM2);
+        }
     }
 
     @Override
@@ -106,6 +111,7 @@ public class DashBoardFragment extends Fragment {
         weatherDaoInterface = WeatherApiUtils.getWeatherDaoInterface();
 
         textViewToolbarTitle = rootView.findViewById(R.id.textViewToolbarTitle);
+        swipeRefreshDashboard = rootView.findViewById(R.id.swipeRefreshDashboard);
 
         textViewTemperature =  rootView.findViewById(R.id.textViewTemperature);
         imageViewIcon = rootView.findViewById(R.id.imageViewIcon);
@@ -120,9 +126,19 @@ public class DashBoardFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
 
+        rootView.setClickable(true);
+
+        swipeRefreshDashboard.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ((MainActivity)getActivity()).refreshDashBoard();
+
+            }
+        });
+
 
         //textViewToolbarTitle.setText("asd");
-        weatherData(38.0787,26.9584);
+        weatherData(lat,lon);
 
 
 
@@ -130,6 +146,7 @@ public class DashBoardFragment extends Fragment {
     }
 
     private void setTodayCard(ForecastCardData data){
+
 
         progressBarToday.setVisibility(ProgressBar.INVISIBLE);
         textViewTemperature.setText(data.getTemperature() + "°");
@@ -150,6 +167,7 @@ public class DashBoardFragment extends Fragment {
                 Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("dashboard");
                 if(fragment != null){
                     //((MainActivity)getActivity()).refreshDashBoard();
+
                 }
             }
         });
@@ -204,19 +222,24 @@ public class DashBoardFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void fillData(WeatherResponse wr){
+        forecastCardDataList = new ArrayList<>();
         SimpleDateFormat sd;
         Date time;
         int unixTime;
 
+        ((MainActivity)getActivity()).setToolbarTile(wr.getCity().getName()+", "+ wr.getCity().getCountry()); //değiştir
+
         for (com.example.weatherapp.WeatherApi.List list:wr.getList()) {
             ForecastCardData data = new ForecastCardData();
             unixTime = list.getDt();
-            time = new java.util.Date((long) unixTime * 1000);
+            time = new java.util.Date(unixTime * 1000L);
 
             sd = new SimpleDateFormat("EEEE", new Locale("tr"));
+            sd.setTimeZone(TimeZone.getTimeZone("UTC"));
             data.setDay(sd.format(time));
 
-            sd = new SimpleDateFormat("HH:mm", new Locale("tr"));
+            sd = new SimpleDateFormat("HH:mm");
+            sd.setTimeZone(TimeZone.getTimeZone("UTC"));
             data.setTime(sd.format(time));
 
             switch (data.getDay()){
@@ -295,10 +318,9 @@ public class DashBoardFragment extends Fragment {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
 
-                forecastCardDataList = new ArrayList<>();
+
                 fillData(response.body());
                 setTodayCard(forecastCardDataList.get(0));
-
 
                 forecastRecyclerViewAdapter = new ForecastRecyclerViewAdapter(getActivity(),forecastCardDataList);
                 recyclerView.setAdapter(forecastRecyclerViewAdapter);

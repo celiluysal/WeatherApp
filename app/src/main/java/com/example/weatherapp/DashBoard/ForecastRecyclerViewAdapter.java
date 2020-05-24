@@ -1,6 +1,7 @@
 package com.example.weatherapp.DashBoard;
 
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +48,6 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
     @Override
     public void onBindViewHolder(@NonNull ForecastCardHolder holder, int position) {
 
-
         holder.textViewTimeOfDay.setText(forecastFiveDayList.get(position).getTime());
         holder.textViewDayOfWeek.setText(forecastFiveDayList.get(position).getDay());
         holder.textViewTemp.setText(forecastFiveDayList.get(position).getTemperature() + "°");
@@ -75,9 +75,14 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
             public void onClick(View v) {
                 //detach dashboard
                 Fragment fragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag("dashboard");
-                /*if(fragment != null){
-                    fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
-                }*/
+                if(fragment != null){
+                    //fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
+                    //fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
+                    //Log.e("a", String.valueOf(holder.view.isClickable()));
+
+
+
+                }
                 //go fragment
                 fragmentActivity.getSupportFragmentManager()
                         .beginTransaction().add(R.id.fragmentHolder,

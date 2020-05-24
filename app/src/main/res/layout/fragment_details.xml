@@ -6,8 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#99000000"
+    android:clickable="true"
     android:fitsSystemWindows="true"
-    tools:context=".Details.DetailsFragment">
+    tools:context=".Details.DetailsFragment"
+    android:focusable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -20,14 +22,15 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/cardview_light_background"
             android:clickable="true"
-            android:elevation="8dp"
+            app:elevation="8dp"
             android:src="@drawable/ic_close_black_24dp"
             app:backgroundTint="@android:color/background_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:useCompatPadding="true" />
+            app:useCompatPadding="true"
+            android:focusable="true" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewDetails"
@@ -163,6 +166,14 @@
                                 tools:listitem="@layout/item_detail_hours" />
 
                         </androidx.cardview.widget.CardView>
+
+                        <View
+                            android:id="@+id/view"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/cardViewHourOfDayContainer" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
