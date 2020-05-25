@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weatherapp.Details.DetailsFragment;
@@ -51,13 +52,8 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
         holder.textViewTimeOfDay.setText(forecastFiveDayList.get(position).getTime());
         holder.textViewDayOfWeek.setText(forecastFiveDayList.get(position).getDay());
         holder.textViewTemp.setText(forecastFiveDayList.get(position).getTemperature() + "°");
-
         holder.textViewTempMin.setText(forecastFiveDayList.get(position).getMinTemperature() + "°");
-       //Log.e("a", String.valueOf(forecastCardDataList.get(position).getMinTemperature()));
-
         holder.textViewTempMax.setText(forecastFiveDayList.get(position).getMaxTemperature() + "°");
-       /* Log.e("a", String.valueOf(forecastCardDataList.get(position).getMaxTemperature()));
-        Log.e("a","-------------------------------------");*/
 
         String uri = "@drawable/a"+ forecastFiveDayList.get(position).getIcon() +"_svg"; //imname without extension
         int imageResource = holder.view.getResources().getIdentifier(uri, null, "com.example.weatherapp");
@@ -73,22 +69,23 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
         holder.cardViewOtherdays.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //detach dashboard
-                Fragment fragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag("dashboard");
+                /*Fragment fragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag("dashboard");
                 if(fragment != null){
                     //fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
                     //fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
                     //Log.e("a", String.valueOf(holder.view.isClickable()));
-
-
-
-                }
+                }*/
                 //go fragment
+                /*DetailsFragment  tmp = DetailsFragment.newInstance(selectOneDay((String) holder.textViewDayOfWeek.getText()));
+                FragmentTransaction ft = fragmentActivity.getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.enter,R.anim.exit);
+                ft.add(R.id.fragmentHolder, tmp,"details").commit();*/
+
+
                 fragmentActivity.getSupportFragmentManager()
                         .beginTransaction().add(R.id.fragmentHolder,
                         DetailsFragment.newInstance(selectOneDay((String) holder.textViewDayOfWeek.getText())),"details")
                         .commit();
-
             }
         });
     }
@@ -98,7 +95,6 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
         for (ForecastCardData data:forecastCardDataList){
             if (data.getTime().equals("12:00")){
                 forecastFiveDayList.add(data);
-                //Log.e("saat",data.getDay()+" - "+data.getTime());
             }
         }
     }
@@ -115,9 +111,9 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
 
     @Override
     public int getItemCount() {
-
         return forecastFiveDayList.size();
     }
+
     public class ForecastCardHolder extends RecyclerView.ViewHolder {
 
         private View view;

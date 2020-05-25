@@ -31,6 +31,7 @@ import com.example.weatherapp.WeatherApi.WeatherResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -54,7 +55,7 @@ public class DashBoardFragment extends Fragment {
 
     private View rootView;
 
-    private java.util.List<ForecastCardData> forecastCardDataList;
+    //private java.util.List<ForecastCardData> forecastCardDataList;
 
     private SwipeRefreshLayout swipeRefreshDashboard;
     private RecyclerView recyclerView;
@@ -71,9 +72,7 @@ public class DashBoardFragment extends Fragment {
 
 
     public DashBoardFragment() {
-
         // Required empty public constructor
-
     }
 
     /**
@@ -106,7 +105,6 @@ public class DashBoardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //weatherResponse = (WeatherResponse) getArguments().getSerializable(WEATHER_RESPONSE_KEY);
         rootView = inflater.inflate(R.layout.fragment_dash_board, container, false);
         weatherDaoInterface = WeatherApiUtils.getWeatherDaoInterface();
 
@@ -126,28 +124,20 @@ public class DashBoardFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
 
-        rootView.setClickable(true);
-
         swipeRefreshDashboard.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 ((MainActivity)getActivity()).refreshDashBoard();
-
             }
         });
 
 
-        //textViewToolbarTitle.setText("asd");
         weatherData(lat,lon);
-
-
 
         return rootView;
     }
 
     private void setTodayCard(ForecastCardData data){
-
-
         progressBarToday.setVisibility(ProgressBar.INVISIBLE);
         textViewTemperature.setText(data.getTemperature() + "°");
 
@@ -167,7 +157,6 @@ public class DashBoardFragment extends Fragment {
                 Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("dashboard");
                 if(fragment != null){
                     //((MainActivity)getActivity()).refreshDashBoard();
-
                 }
             }
         });
@@ -221,8 +210,8 @@ public class DashBoardFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void fillData(WeatherResponse wr){
-        forecastCardDataList = new ArrayList<>();
+    private List<ForecastCardData> fillData(WeatherResponse wr){
+        List<ForecastCardData> forecastCardDataList = new ArrayList<>();
         SimpleDateFormat sd;
         Date time;
         int unixTime;
@@ -303,12 +292,17 @@ public class DashBoardFragment extends Fragment {
 
             data.setHumidity((int) Math.round(list.getMain().getHumidity()));
             data.setIcon(list.getWeather().get(0).getIcon());
+
             data.setWeatherInfo(list.getWeather().get(0).getDescription());
+            String upperString = data.getWeatherInfo().substring(0, 1).toUpperCase() + data.getWeatherInfo().substring(1).toLowerCase();
+            data.setWeatherInfo(upperString);
+
 
             forecastCardDataList.add(data);
 
         }
         setMinMax(forecastCardDataList);
+        return forecastCardDataList;
     }
 
 
@@ -317,14 +311,10 @@ public class DashBoardFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-
-
-                fillData(response.body());
+                List<ForecastCardData> forecastCardDataList = fillData(response.body());
                 setTodayCard(forecastCardDataList.get(0));
-
                 forecastRecyclerViewAdapter = new ForecastRecyclerViewAdapter(getActivity(),forecastCardDataList);
                 recyclerView.setAdapter(forecastRecyclerViewAdapter);
-
             }
 
             @Override

@@ -5,10 +5,13 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,21 +64,30 @@ public class MainActivity extends AppCompatActivity{
         textViewToolbarTitle = findViewById(R.id.textViewToolbarTitle);
         frameLayout = findViewById(R.id.fragmentHolder);
 
-        weatherDaoInterface = WeatherApiUtils.getWeatherDaoInterface();
-        placeDaoInterface = PlaceApiUtils.getPlaceDaoInterface();
-
-
         toolbar.setNavigationIcon(R.drawable.ic_menu);
         setSupportActionBar(toolbar);
         getSupportActionBar().show();
 
-        //tempFragment = new DashBoardFragment();
+        weatherDaoInterface = WeatherApiUtils.getWeatherDaoInterface();
+        placeDaoInterface = PlaceApiUtils.getPlaceDaoInterface();
+
+
+       /* SharedPreferences sh = getSharedPreferences("coord", MODE_PRIVATE);
+        String a = sh.getString("lat","38.0787");
+        lat = Double.valueOf(a);
+        a = sh.getString("lon","26.9584");
+        lon = Double.valueOf(a);*/
 
 
         lat = 38.0787;
         lon = 26.9584;
+
         tempFragment = DashBoardFragment.newInstance(lat,lon);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentHolder, tempFragment,"dashboard").commit();
+        DashBoardFragment  tmp = DashBoardFragment.newInstance(lat,lon);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+        //ft.setCustomAnimations(R.anim.enter,R.anim.exit);
+        ft.replace(R.id.fragmentHolder, tmp,"dashboard").commit();
 
     }
 
@@ -89,8 +101,11 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.search_item){
-            //detach dashboard
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("details");
+            if(fragment != null){
+                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            }
+            fragment = getSupportFragmentManager().findFragmentByTag("dashboard");
             if(fragment != null){
                 getSupportFragmentManager().beginTransaction().hide(fragment).commit();
             }
@@ -124,13 +139,10 @@ public class MainActivity extends AppCompatActivity{
             if(fragment != null){
                 getSupportFragmentManager().beginTransaction().attach(fragment).commit();
             }
-
         }
         else {
             super.onBackPressed();
-
         }
-
         //super.onBackPressed();
     }
 
@@ -155,6 +167,15 @@ public class MainActivity extends AppCompatActivity{
     public void setCoordAndShow(Double lat, Double lon){
         this.lat = lat;
         this.lon = lon;
+
+        Log.e("a",lat+"");
+        Log.e("a",lon+"");
+
+        SharedPreferences sharedPreferences = getSharedPreferences("coord",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("lat",Double.toString(lat));
+        editor.putString("lon",Double.toString(lon));
+        editor.apply();
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("search");
         getSupportFragmentManager().beginTransaction().remove(fragment).commit();

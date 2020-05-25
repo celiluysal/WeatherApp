@@ -107,8 +107,6 @@ public class SearchFragment extends Fragment {
         placeDaoInterface.getPlaceData(query).enqueue(new Callback<PlaceResponse>() {
             @Override
             public void onResponse(Call<PlaceResponse> call, Response<PlaceResponse> response) {
-                //String localeNames = response.body().getHits().get(0).getLocaleNames().getDefault().get(0);
-                //Log.e("2",localeNames);
                 if (response.body().getHits() != null) {
                     searchRecyclerVivewAdapter = new SearchRecyclerVivewAdapter(response.body().getHits());
                     recyclerView.setAdapter(searchRecyclerVivewAdapter);

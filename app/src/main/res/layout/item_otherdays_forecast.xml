@@ -13,17 +13,30 @@
         android:layout_width="150dp"
         android:layout_height="200dp"
         android:layout_marginLeft="4dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginRight="4dp"
-        android:layout_marginBottom="8dp"
-        app:cardBackgroundColor="@color/colorAccent"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="@color/color_day7"
         app:cardCornerRadius="24dp"
-        app:cardElevation="2dp"
+        app:cardElevation="8dp"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageViewFivedaysBackground"
+            android:layout_width="190dp"
+            android:layout_height="190dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:tint="@color/white_transpalet"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/a04d_svg"
+            tools:ignore="VectorDrawableCompat" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -35,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="12:00"
-                android:textColor="@color/cardview_light_background"
+                android:textColor="@color/white"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Monday"
-                android:textColor="@color/cardview_light_background"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="18\u00B0"
-                android:textColor="@color/cardview_light_background"
+                android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -100,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
                     android:text="6\u00B0"
-                    android:textColor="#B3FFFFFF"
+                    android:textColor="@color/white_transpalet"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -113,25 +126,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
                     android:text="22\u00B0"
-                    android:textColor="#B3FFFFFF"
+                    android:textColor="@color/white_transpalet"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent" />
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/imageViewFivedaysBackground"
-                android:layout_width="190dp"
-                android:layout_height="190dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="30dp"
-
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/a04d_svg"
-                tools:ignore="VectorDrawableCompat" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

@@ -4,8 +4,14 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
 
+
+    <color name="full_transpalet">#00FFFFFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="white_transpalet">#B3FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="black_transpalet">#B3000000</color>
+    <color name="text_color_1">#001845</color>
+
 
     <color name="color_day1">#B60035</color>
     <color name="color_day2">#60D394</color>

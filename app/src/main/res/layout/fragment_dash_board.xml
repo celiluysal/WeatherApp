@@ -29,8 +29,8 @@
                         android:id="@+id/cardViewTodayText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:cardBackgroundColor="@android:color/primary_text_dark_nodisable"
+                        android:layout_marginTop="8dp"
+                        app:cardBackgroundColor="@color/white_transpalet"
                         app:cardCornerRadius="14dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
@@ -43,6 +43,7 @@
                             android:layout_height="match_parent"
                             android:paddingHorizontal="10dp"
                             android:paddingVertical="5dp"
+                            android:textColor="@color/text_color_1"
                             android:text="Today"
                             android:textSize="14sp" />
                     </androidx.cardview.widget.CardView>
@@ -58,10 +59,10 @@
                         android:id="@+id/textViewNext5Days"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/text_color_1"
                         android:layout_marginStart="16dp"
                         android:layout_marginLeft="16dp"
-
-                        android:text="Next 5 Days"
+                        android:text="@string/Next5Days"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"

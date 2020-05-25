@@ -5,19 +5,26 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.weatherapp.ForecastCardData;
+import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -49,6 +56,7 @@ public class DetailsFragment extends Fragment {
     private ImageView imageViewForecastIcon;
     private CardView cardViewHourOfDayContainer;
     private FrameLayout frameLayout;
+    private ConstraintLayout constraintLayoutDetails;
 
     private List<ForecastCardData> forecastCardDataList;
 
@@ -68,9 +76,7 @@ public class DetailsFragment extends Fragment {
     public static DetailsFragment newInstance(List<ForecastCardData> param1) {
         DetailsFragment fragment = new DetailsFragment();
         Bundle args = new Bundle();
-        //args.putString(ARG_PARAM1, param1);
         args.putSerializable(ARG_PARAM1, (Serializable) param1);
-        //args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,11 +86,29 @@ public class DetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             forecastCardDataList = (List<ForecastCardData>) getArguments().getSerializable(ARG_PARAM1);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
-
-
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        constraintLayoutDetails.setFocusableInTouchMode(true);
+        constraintLayoutDetails.requestFocus();
+        constraintLayoutDetails.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+                    RemoveAndAnimation();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,48 +124,67 @@ public class DetailsFragment extends Fragment {
         imageViewForecastIcon = rootView.findViewById(R.id.imageViewForecastIcon);
         cardViewHourOfDayContainer = rootView.findViewById(R.id.cardViewHourOfDayContainer);
         frameLayout = rootView.findViewById(R.id.frameLayout);
+        constraintLayoutDetails = rootView.findViewById(R.id.constraintLayoutDetails);
 
         recyclerView = rootView.findViewById(R.id.recyclerViewHourOfDay);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-
         detailsRecyclerViewAdapter = new DetailsRecyclerViewAdapter(getActivity(),forecastCardDataList);
         recyclerView.setAdapter(detailsRecyclerViewAdapter);
+
+        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.enter);
+        constraintLayoutDetails.startAnimation(animation);
 
         setDetailsCard();
 
         return rootView;
     }
 
+
+    public int getHourPosition(String hour){
+        int position = 0;
+        for (int i=0;i<forecastCardDataList.size();i++){
+            if (forecastCardDataList.get(i).getTime().equals(hour)) {
+                position = i;
+            }
+        }
+        return position;
+    }
+
+    private void RemoveAndAnimation(){
+        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.exit);
+        constraintLayoutDetails.startAnimation(animation);
+        constraintLayoutDetails.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("details");
+                getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            }
+        },animation.getDuration());
+    }
+
     @SuppressLint("Range")
     public void setDetailsCard(){
 
-        textViewDayOfWeek.setText(forecastCardDataList.get(0).getDay());
-        textViewTemp.setText(forecastCardDataList.get(0).getTemperature() + "°");
-        textViewTempMin.setText(forecastCardDataList.get(0).getMinTemperature() + "°");
+        int position = getHourPosition("12:00");
+        textViewDayOfWeek.setText(forecastCardDataList.get(position).getDay());
+        textViewTemp.setText(forecastCardDataList.get(position).getTemperature() + "°");
+        textViewTempMin.setText(forecastCardDataList.get(position).getMinTemperature() + "°");
         textViewTempMin.setAlpha(30);
-        textViewTempMax.setText(forecastCardDataList.get(0).getMaxTemperature() + "°");
+        textViewTempMax.setText(forecastCardDataList.get(position).getMaxTemperature() + "°");
         textViewTempMax.setAlpha(30);
 
-        String uri = "@drawable/a"+ forecastCardDataList.get(0).getIcon() +"_svg"; //imname without extension
+        String uri = "@drawable/a"+ forecastCardDataList.get(position).getIcon() +"_svg"; //imname without extension
         int imageResource = getResources().getIdentifier(uri, null, "com.example.weatherapp");
         imageViewForecastIcon.setImageResource(imageResource);
 
         cardViewDetails.setCardBackgroundColor(forecastCardDataList.get(0).getColorDay());
 
 
-        //cardViewHourOfDayContainer.setCardBackgroundColor(Color.parseColor("#d3deff"));
-
         floatingActionButtonClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("q","close");
-                Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("details");
-                getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-                fragment = getActivity().getSupportFragmentManager().findFragmentByTag("dashboard");
-                if(fragment != null){
-                    //getActivity().getSupportFragmentManager().beginTransaction().attach(fragment).commit();
-                }
+                RemoveAndAnimation();
             }
         });
     }

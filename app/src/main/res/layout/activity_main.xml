@@ -12,6 +12,7 @@
         android:id="@+id/fragmentHolder"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,25 +23,26 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@null"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:background="@color/full_transpalet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
 
+
         <TextView
             android:id="@+id/textViewToolbarTitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginRight="18dp"
+            android:layout_marginEnd="18dp"
             android:gravity="center"
-            android:text="Konum, TR"
-            android:textColor="@color/colorPrimaryDark"
+            android:text="Mevcut konum"
+            android:textColor="@color/text_color_1"
             android:textSize="19sp"
             android:textStyle="bold"
-            android:layout_marginRight="24dp" />
+             />
     </androidx.appcompat.widget.Toolbar>
 
 

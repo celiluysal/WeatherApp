@@ -60,7 +60,7 @@ public class SearchRecyclerVivewAdapter extends RecyclerView.Adapter<SearchRecyc
         String text = "";
         text += hitList.get(position).getLocaleNames().getDefault().get(0);
         text += ", ";
-        if (hitList.get(position).getCounty() != null) {
+        if (hitList.get(position).getCounty() != null && hitList.get(position).getCounty().getDefault() != null) {
             text += hitList.get(position).getCounty().getDefault().get(0);
             text += ", ";
         }
