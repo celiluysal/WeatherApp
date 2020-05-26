@@ -1,6 +1,5 @@
 package com.example.weatherapp.Details;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,7 +33,6 @@ public class DetailsRecyclerViewAdapter extends RecyclerView.Adapter<DetailsRecy
 
     @Override
     public void onBindViewHolder(@NonNull DetailsHolder holder, int position) {
-
         holder.textViewHourOfDay.setText(forecastCardDataList.get(position).getTime());
         holder.textViewTemp.setText(forecastCardDataList.get(position).getTemperature()+"°");
 
@@ -43,10 +40,6 @@ public class DetailsRecyclerViewAdapter extends RecyclerView.Adapter<DetailsRecy
         int imageResource = holder.view.getResources().getIdentifier(uri, null, "com.example.weatherapp");
         holder.imageViewForecastIcon.setImageResource(imageResource);
         holder.imageViewForecastIcon.setColorFilter(forecastCardDataList.get(position).getColorHour());
-
-
-
-
     }
 
     @Override
@@ -66,11 +59,6 @@ public class DetailsRecyclerViewAdapter extends RecyclerView.Adapter<DetailsRecy
             textViewHourOfDay = itemView.findViewById(R.id.textViewHourOfDay);
             textViewTemp = itemView.findViewById(R.id.textViewTemp);
             imageViewForecastIcon = itemView.findViewById(R.id.imageViewForecastIcon);
-
-
-
-
-
         }
     }
 }

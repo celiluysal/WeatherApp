@@ -11,9 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weatherapp.Details.DetailsFragment;
@@ -27,8 +25,6 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
     private java.util.List<ForecastCardData> forecastCardDataList;
     private java.util.List<ForecastCardData> forecastFiveDayList;
     private FragmentActivity fragmentActivity;
-
-
 
     public ForecastRecyclerViewAdapter(FragmentActivity fragmentActivity, java.util.List<ForecastCardData> forecastCardDataList) {
         this.forecastCardDataList = forecastCardDataList;
@@ -55,7 +51,7 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
         holder.textViewTempMin.setText(forecastFiveDayList.get(position).getMinTemperature() + "°");
         holder.textViewTempMax.setText(forecastFiveDayList.get(position).getMaxTemperature() + "°");
 
-        String uri = "@drawable/a"+ forecastFiveDayList.get(position).getIcon() +"_svg"; //imname without extension
+        String uri = "@drawable/a"+ forecastFiveDayList.get(position).getIcon() +"_svg";
         int imageResource = holder.view.getResources().getIdentifier(uri, null, "com.example.weatherapp");
         holder.imageViewForecastIcon.setImageResource(imageResource);
         holder.imageViewFivedaysBackground.setImageResource(imageResource);
@@ -69,19 +65,6 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
         holder.cardViewOtherdays.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Fragment fragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag("dashboard");
-                if(fragment != null){
-                    //fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
-                    //fragmentActivity.getSupportFragmentManager().beginTransaction().detach(fragment).commit();
-                    //Log.e("a", String.valueOf(holder.view.isClickable()));
-                }*/
-                //go fragment
-                /*DetailsFragment  tmp = DetailsFragment.newInstance(selectOneDay((String) holder.textViewDayOfWeek.getText()));
-                FragmentTransaction ft = fragmentActivity.getSupportFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.enter,R.anim.exit);
-                ft.add(R.id.fragmentHolder, tmp,"details").commit();*/
-
-
                 fragmentActivity.getSupportFragmentManager()
                         .beginTransaction().add(R.id.fragmentHolder,
                         DetailsFragment.newInstance(selectOneDay((String) holder.textViewDayOfWeek.getText())),"details")
@@ -136,8 +119,6 @@ public class ForecastRecyclerViewAdapter extends RecyclerView.Adapter<ForecastRe
             imageViewFivedaysBackground = itemView.findViewById(R.id.imageViewFivedaysBackground);
             cardViewOtherdays = itemView.findViewById(R.id.cardViewOtherdays);
         }
-
-
     }
 }
 

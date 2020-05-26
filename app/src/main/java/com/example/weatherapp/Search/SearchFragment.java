@@ -83,7 +83,6 @@ public class SearchFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.recyclerViewSearchResults);
         recyclerView.setHasFixedSize(true);
 
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -96,10 +95,6 @@ public class SearchFragment extends Fragment {
                 return true;
             }
         });
-
-
-
-
         return rootView;
     }
 
@@ -111,7 +106,6 @@ public class SearchFragment extends Fragment {
                     searchRecyclerVivewAdapter = new SearchRecyclerVivewAdapter(response.body().getHits());
                     recyclerView.setAdapter(searchRecyclerVivewAdapter);
                 }
-
             }
 
             @Override

@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
+        android:background="@color/white"
         >
 
 
@@ -31,9 +31,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/border"
-                android:clickable="false"
-                android:elevation="8dp"
                 android:inputType="text"
+                android:queryHint="Aramak istediğiniz yer ismini giriniz."
+                android:iconifiedByDefault="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -48,6 +48,7 @@
                 android:id="@+id/recyclerViewSearchResults"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/white"
                 android:layout_margin="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

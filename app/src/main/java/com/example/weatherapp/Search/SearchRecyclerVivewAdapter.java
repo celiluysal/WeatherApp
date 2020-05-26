@@ -36,27 +36,6 @@ public class SearchRecyclerVivewAdapter extends RecyclerView.Adapter<SearchRecyc
 
     @Override
     public void onBindViewHolder(@NonNull SearchResultHolder holder, int position) {
-
-        /*String text = "";
-        text += hitList.get(position).getLocaleNames().getDefault().get(0);
-        text += " - ";
-
-        if (hitList.get(position).getCounty() != null) {
-            text += hitList.get(position).getCounty().getDefault().get(0);
-            text += " - ";
-        }
-
-        if (hitList.get(position).getAdministrative() != null) {
-            text += hitList.get(position).getAdministrative().get(0);
-            text += " - ";
-        }
-
-        text += hitList.get(position).getCountry().getDefault();
-        text += " - ";
-
-
-        holder.textViewCityName.setText(text);*/
-
         String text = "";
         text += hitList.get(position).getLocaleNames().getDefault().get(0);
         text += ", ";
@@ -84,8 +63,6 @@ public class SearchRecyclerVivewAdapter extends RecyclerView.Adapter<SearchRecyc
 
         holder.textViewCityName.setText(builder);
 
-
-
         holder.textViewCityName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,16 +73,8 @@ public class SearchRecyclerVivewAdapter extends RecyclerView.Adapter<SearchRecyc
                 Log.e("name", String.valueOf(builder));
 
                 MainActivity.getInstance().setCoordAndShow(lat,lon);
-
             }
         });
-
-
-
-
-
-
-
     }
 
     @Override

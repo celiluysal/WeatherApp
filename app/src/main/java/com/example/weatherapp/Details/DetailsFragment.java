@@ -1,30 +1,25 @@
 package com.example.weatherapp.Details;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.weatherapp.ForecastCardData;
-import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -90,30 +85,10 @@ public class DetailsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        constraintLayoutDetails.setFocusableInTouchMode(true);
-        constraintLayoutDetails.requestFocus();
-        constraintLayoutDetails.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
-                    RemoveAndAnimation();
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_details, container, false);
         floatingActionButtonClose = rootView.findViewById(R.id.floatingActionButtonClose);
         cardViewDetails = rootView.findViewById(R.id.cardViewDetails);
@@ -132,7 +107,7 @@ public class DetailsFragment extends Fragment {
         detailsRecyclerViewAdapter = new DetailsRecyclerViewAdapter(getActivity(),forecastCardDataList);
         recyclerView.setAdapter(detailsRecyclerViewAdapter);
 
-        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.enter);
+        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.slide_down_enter);
         constraintLayoutDetails.startAnimation(animation);
 
         setDetailsCard();
@@ -140,8 +115,7 @@ public class DetailsFragment extends Fragment {
         return rootView;
     }
 
-
-    public int getHourPosition(String hour){
+    private int getHourPosition(String hour){
         int position = 0;
         for (int i=0;i<forecastCardDataList.size();i++){
             if (forecastCardDataList.get(i).getTime().equals(hour)) {
@@ -151,8 +125,25 @@ public class DetailsFragment extends Fragment {
         return position;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        constraintLayoutDetails.setFocusableInTouchMode(true);
+        constraintLayoutDetails.requestFocus();
+        constraintLayoutDetails.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+                    RemoveAndAnimation();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
     private void RemoveAndAnimation(){
-        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.exit);
+        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.slide_down_exit);
         constraintLayoutDetails.startAnimation(animation);
         constraintLayoutDetails.postDelayed(new Runnable() {
             @Override
@@ -179,7 +170,6 @@ public class DetailsFragment extends Fragment {
         imageViewForecastIcon.setImageResource(imageResource);
 
         cardViewDetails.setCardBackgroundColor(forecastCardDataList.get(0).getColorDay());
-
 
         floatingActionButtonClose.setOnClickListener(new View.OnClickListener() {
             @Override

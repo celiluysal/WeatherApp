@@ -25,7 +25,6 @@ import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
 import com.example.weatherapp.Retrofit.WeatherApiUtils;
 import com.example.weatherapp.Retrofit.WeatherDaoInterface;
-import com.example.weatherapp.WeatherApi.City;
 import com.example.weatherapp.WeatherApi.WeatherResponse;
 
 import java.util.ArrayList;
@@ -55,20 +54,18 @@ public class DashBoardFragment extends Fragment {
 
     private View rootView;
 
-    //private java.util.List<ForecastCardData> forecastCardDataList;
 
     private SwipeRefreshLayout swipeRefreshDashboard;
     private RecyclerView recyclerView;
     private ForecastRecyclerViewAdapter forecastRecyclerViewAdapter;
 
-    private TextView textViewTemperature,textViewWeatherInfo,textViewHumidity, textViewToolbarTitle;
+    private TextView textViewTemperature,textViewWeatherInfo,textViewHumidity;
     private ImageView imageViewIcon,imageViewTodayBackground;
     private CardView cardViewToday;
-    private ProgressBar progressBarToday,progressBarOtherdays;
+    private ProgressBar progressBarToday;
 
     private WeatherDaoInterface weatherDaoInterface;
-    private City city;
-    private String cityName;
+
 
 
     public DashBoardFragment() {
@@ -108,9 +105,7 @@ public class DashBoardFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_dash_board, container, false);
         weatherDaoInterface = WeatherApiUtils.getWeatherDaoInterface();
 
-        textViewToolbarTitle = rootView.findViewById(R.id.textViewToolbarTitle);
         swipeRefreshDashboard = rootView.findViewById(R.id.swipeRefreshDashboard);
-
         textViewTemperature =  rootView.findViewById(R.id.textViewTemperature);
         imageViewIcon = rootView.findViewById(R.id.imageViewIcon);
         imageViewTodayBackground = rootView.findViewById(R.id.imageViewTodayBackground);
@@ -150,17 +145,6 @@ public class DashBoardFragment extends Fragment {
         textViewWeatherInfo.setText(data.getWeatherInfo());
         textViewHumidity.setText("%"+data.getHumidity());
         cardViewToday.setCardBackgroundColor(data.getColorDay());
-
-        cardViewToday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("dashboard");
-                if(fragment != null){
-                    //((MainActivity)getActivity()).refreshDashBoard();
-                }
-            }
-        });
-
     }
 
     private void setMinMax(java.util.List<ForecastCardData> dataList){
@@ -175,7 +159,6 @@ public class DashBoardFragment extends Fragment {
                 temps.add(dataList.get(i).getTemperature());
             }
             else {
-                //tempsOfDays.add(temps);
                 if (temps != null) {
                     daysMinMax[counter][0] = Collections.min(temps);
                     daysMinMax[counter][1] = Collections.max(temps);
@@ -281,7 +264,7 @@ public class DashBoardFragment extends Fragment {
                     data.setColorHour(getResources().getColor(R.color.color_day7));
                     break;
                 case "21:00":
-                    data.setColorHour(getResources().getColor(R.color.color_day7));
+                    data.setColorHour(getResources().getColor(R.color.color_day4));
                     break;
                 default:
                     data.setColorHour(getResources().getColor(R.color.color_day1));
