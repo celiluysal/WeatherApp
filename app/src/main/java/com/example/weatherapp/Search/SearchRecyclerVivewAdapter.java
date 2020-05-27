@@ -15,16 +15,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weatherapp.MainActivity;
-import com.example.weatherapp.PlaceApi.Hit;
 import com.example.weatherapp.R;
+import com.example.weatherapp.SearchCardData;
 
 import java.util.List;
 
 public class SearchRecyclerVivewAdapter extends RecyclerView.Adapter<SearchRecyclerVivewAdapter.SearchResultHolder>{
-    private List<Hit> hitList;
+    private List<SearchCardData> searchCardData;
 
-    public SearchRecyclerVivewAdapter(List<Hit> hitList) {
-        this.hitList = hitList;
+    public SearchRecyclerVivewAdapter(List<SearchCardData> searchCardData) {
+        this.searchCardData = searchCardData;
     }
 
     @NonNull
@@ -37,20 +37,20 @@ public class SearchRecyclerVivewAdapter extends RecyclerView.Adapter<SearchRecyc
     @Override
     public void onBindViewHolder(@NonNull SearchResultHolder holder, int position) {
         String text = "";
-        text += hitList.get(position).getLocaleNames().getDefault().get(0);
+        text += searchCardData.get(position).getLocaleName();
         text += ", ";
-        if (hitList.get(position).getCounty() != null && hitList.get(position).getCounty().getDefault() != null) {
-            text += hitList.get(position).getCounty().getDefault().get(0);
+        if (!searchCardData.get(position).getCounty().equals("")) {
+            text += searchCardData.get(position).getCounty();
             text += ", ";
         }
         SpannableString s1 = new SpannableString(text);
 
         text = "";
-        if (hitList.get(position).getAdministrative() != null) {
-            text += hitList.get(position).getAdministrative().get(0);
+        if (!searchCardData.get(position).getAdministrative().equals("")) {
+            text += searchCardData.get(position).getAdministrative();
             text += ", ";
         }
-        text += hitList.get(position).getCountry().getDefault();
+        text += searchCardData.get(position).getCountry();
         SpannableString s2 = new SpannableString(text);
 
         int flag = Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
@@ -66,20 +66,16 @@ public class SearchRecyclerVivewAdapter extends RecyclerView.Adapter<SearchRecyc
         holder.textViewCityName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Double lat,lon;
-                lat = hitList.get(position).getGeoloc().getLat();
-                lon = hitList.get(position).getGeoloc().getLng();
-                Log.e("coord", String.valueOf(lat) + " - " + String.valueOf(lon));
-                Log.e("name", String.valueOf(builder));
-
-                MainActivity.getInstance().setCoordAndShow(lat,lon);
+                MainActivity.getInstance().setCoordAndShow(
+                        searchCardData.get(position).getLat()
+                        ,searchCardData.get(position).getLon());
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return hitList.size();
+        return searchCardData.size();
     }
 
     public class SearchResultHolder extends RecyclerView.ViewHolder {

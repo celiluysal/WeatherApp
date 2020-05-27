@@ -9,12 +9,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
+import com.example.weatherapp.PlaceApi.Hit;
 import com.example.weatherapp.PlaceApi.PlaceResponse;
 import com.example.weatherapp.R;
 import com.example.weatherapp.Retrofit.PlaceApiUtils;
 import com.example.weatherapp.Retrofit.PlaceDaoInterface;
+import com.example.weatherapp.SearchCardData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,6 +71,13 @@ public class SearchFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        InputMethodManager imm = (InputMethodManager)   rootView.getContext().getSystemService(rootView.getContext().INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -83,6 +96,12 @@ public class SearchFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.recyclerViewSearchResults);
         recyclerView.setHasFixedSize(true);
 
+
+        InputMethodManager imm = (InputMethodManager)   rootView.getContext().getSystemService(rootView.getContext().INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+        searchView.requestFocus();
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -98,12 +117,45 @@ public class SearchFragment extends Fragment {
         return rootView;
     }
 
+
+    private List<SearchCardData> fillData(PlaceResponse pr){
+        List<SearchCardData> searchCardDataList =new ArrayList<>();
+
+        for (Hit hit:pr.getHits()){
+            SearchCardData data = new SearchCardData();
+
+            data.setLocaleName(hit.getLocaleNames().getDefault().get(0));
+            if (hit.getCounty() != null && hit.getCounty().getDefault() != null) {
+                data.setCounty(hit.getCounty().getDefault().get(0));
+            }
+            else {
+                data.setCounty("");
+            }
+
+            if (hit.getAdministrative() != null) {
+                data.setAdministrative(hit.getAdministrative().get(0));
+            }
+            else {
+                data.setAdministrative("");
+            }
+            data.setCountry(hit.getCountry().getDefault());
+
+            data.setLat(hit.getGeoloc().getLat());
+            data.setLon(hit.getGeoloc().getLng());
+
+            searchCardDataList.add(data);
+        }
+
+        return searchCardDataList;
+    }
+
     public void placeData(String query){
         placeDaoInterface.getPlaceData(query).enqueue(new Callback<PlaceResponse>() {
             @Override
             public void onResponse(Call<PlaceResponse> call, Response<PlaceResponse> response) {
                 if (response.body().getHits() != null) {
-                    searchRecyclerVivewAdapter = new SearchRecyclerVivewAdapter(response.body().getHits());
+                    List<SearchCardData> searchCardData = fillData(response.body());
+                    searchRecyclerVivewAdapter = new SearchRecyclerVivewAdapter(searchCardData);
                     recyclerView.setAdapter(searchRecyclerVivewAdapter);
                 }
             }
