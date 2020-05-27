@@ -2,7 +2,9 @@ package com.example.weatherapp.Search;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -12,6 +14,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
+import com.example.weatherapp.Database.SearchDao;
+import com.example.weatherapp.Database.SearchDatabaseHelper;
 import com.example.weatherapp.PlaceApi.Hit;
 import com.example.weatherapp.PlaceApi.PlaceResponse;
 import com.example.weatherapp.R;
@@ -41,12 +45,15 @@ public class SearchFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private ItemTouchHelper itemTouchHelper;
+    private SearchDatabaseHelper searchDatabaseHelper;
+    private List<SearchCardData> searchCardDataList;
+
     private PlaceDaoInterface placeDaoInterface;
     private View rootView;
     private SearchView searchView;
     private RecyclerView recyclerView;
     private SearchRecyclerVivewAdapter searchRecyclerVivewAdapter;
-
 
     public SearchFragment() {
         // Required empty public constructor
@@ -96,10 +103,13 @@ public class SearchFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.recyclerViewSearchResults);
         recyclerView.setHasFixedSize(true);
 
+        fillHistoryFromDatabase();
 
-        InputMethodManager imm = (InputMethodManager)   rootView.getContext().getSystemService(rootView.getContext().INPUT_METHOD_SERVICE);
+        itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        InputMethodManager imm = (InputMethodManager) rootView.getContext().getSystemService(rootView.getContext().INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
         searchView.requestFocus();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -114,9 +124,38 @@ public class SearchFragment extends Fragment {
                 return true;
             }
         });
+
         return rootView;
     }
 
+    private void fillHistoryFromDatabase(){
+        searchDatabaseHelper = new SearchDatabaseHelper(getContext());
+        searchCardDataList = new ArrayList<>();
+        searchCardDataList = new SearchDao().allSearches(searchDatabaseHelper);
+        searchRecyclerVivewAdapter = new SearchRecyclerVivewAdapter(getContext(), searchCardDataList);
+        recyclerView.setAdapter(searchRecyclerVivewAdapter);
+    }
+
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            Log.e("m", "onswipe");
+            //Remove swiped item from list and notify the RecyclerView
+            int position = viewHolder.getAdapterPosition();
+            new SearchDao().deleteSearch(searchDatabaseHelper,
+                    searchCardDataList.get(position).getLat(),
+                    searchCardDataList.get(position).getLon());
+            
+            searchCardDataList.remove(position);
+            searchRecyclerVivewAdapter.notifyDataSetChanged();
+
+        }
+    };
 
     private List<SearchCardData> fillData(PlaceResponse pr){
         List<SearchCardData> searchCardDataList =new ArrayList<>();
@@ -154,9 +193,10 @@ public class SearchFragment extends Fragment {
             @Override
             public void onResponse(Call<PlaceResponse> call, Response<PlaceResponse> response) {
                 if (response.body().getHits() != null) {
-                    List<SearchCardData> searchCardData = fillData(response.body());
-                    searchRecyclerVivewAdapter = new SearchRecyclerVivewAdapter(searchCardData);
+                    searchCardDataList = fillData(response.body());
+                    searchRecyclerVivewAdapter = new SearchRecyclerVivewAdapter(getContext(), searchCardDataList);
                     recyclerView.setAdapter(searchRecyclerVivewAdapter);
+                    itemTouchHelper.attachToRecyclerView(null);
                 }
             }
 

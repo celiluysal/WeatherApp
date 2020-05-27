@@ -1,5 +1,6 @@
 package com.example.weatherapp.Search;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -12,8 +13,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.weatherapp.Database.SearchDao;
+import com.example.weatherapp.Database.SearchDatabaseHelper;
 import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.R;
 import com.example.weatherapp.SearchCardData;
@@ -22,9 +26,12 @@ import java.util.List;
 
 public class SearchRecyclerVivewAdapter extends RecyclerView.Adapter<SearchRecyclerVivewAdapter.SearchResultHolder>{
     private List<SearchCardData> searchCardData;
+    private SearchDatabaseHelper searchDatabaseHelper;
+    private Context context;
 
-    public SearchRecyclerVivewAdapter(List<SearchCardData> searchCardData) {
+    public SearchRecyclerVivewAdapter(Context context, List<SearchCardData> searchCardData) {
         this.searchCardData = searchCardData;
+        this.context = context;
     }
 
     @NonNull
@@ -66,12 +73,19 @@ public class SearchRecyclerVivewAdapter extends RecyclerView.Adapter<SearchRecyc
         holder.textViewCityName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                searchDatabaseHelper = new SearchDatabaseHelper(context);
+                new SearchDao().addSearch(searchDatabaseHelper,searchCardData.get(position));
+
                 MainActivity.getInstance().setCoordAndShow(
                         searchCardData.get(position).getLat()
                         ,searchCardData.get(position).getLon());
             }
         });
     }
+
+
+
 
     @Override
     public int getItemCount() {
