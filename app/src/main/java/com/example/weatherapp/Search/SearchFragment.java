@@ -1,8 +1,20 @@
 package com.example.weatherapp.Search;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -136,7 +148,12 @@ public class SearchFragment extends Fragment {
         recyclerView.setAdapter(searchRecyclerVivewAdapter);
     }
 
+
+    private Paint p = new Paint();
+
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT) {
+
+
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             return false;
@@ -150,12 +167,55 @@ public class SearchFragment extends Fragment {
             new SearchDao().deleteSearch(searchDatabaseHelper,
                     searchCardDataList.get(position).getLat(),
                     searchCardDataList.get(position).getLon());
-            
+
             searchCardDataList.remove(position);
             searchRecyclerVivewAdapter.notifyDataSetChanged();
 
         }
+
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            Bitmap icon;
+            if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
+                View itemView = viewHolder.itemView;
+                float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                float width = height / 3;
+                    if(dX > 0){
+                        p.setColor(Color.parseColor("#ffbfbf"));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX,(float) itemView.getBottom());
+                        c.drawRect(background,p);
+                        icon = getBitmapFromVectorDrawable(getContext(),R.drawable.ic_delete_white);
+
+                        RectF icon_dest = new RectF((float) itemView.getLeft() + width/2,
+                                (float) itemView.getTop() + width/2,
+                                (float) ((float) itemView.getLeft()+ 2.5*width),
+                                (float)itemView.getBottom() - width/2);
+
+                        c.drawBitmap(icon,null,icon_dest,p);
+                }
+            }
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+            itemTouchHelper.attachToRecyclerView(recyclerView);
+        }
+
     };
+
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
 
     private List<SearchCardData> fillData(PlaceResponse pr){
         List<SearchCardData> searchCardDataList =new ArrayList<>();
