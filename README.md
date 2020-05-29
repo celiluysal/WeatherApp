@@ -3,7 +3,7 @@ This is a simple weather forecat app. It is show 5 day / 3 hour weather data fro
 
 This project is based from [furkanaskin/Weatherapp](https://github.com/furkanaskin/Weatherapp) and I am rewrite with java.
 
-I am writing this project for learning android basic android components, Retrofit library and RestAPI.
+I am writing this project for learning basic android components, Retrofit library and RestAPI.
 
 # Screen Views 
 <img src="https://user-images.githubusercontent.com/36231430/83302399-f1969280-a203-11ea-8650-b2711b803ee3.gif" 
