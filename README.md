@@ -1,8 +1,6 @@
 # WeatherApp
 This is a simple weather forecat app. It is show 5 day / 3 hour weather data from [WeatherAPI](https://openweathermap.org/forecast5). For search section part, data fetch from [PlaceAPI](https://community.algolia.com/places/).
 
-This project is based from [furkanaskin/Weatherapp](https://github.com/furkanaskin/Weatherapp) and I am rewrite with java.
-
 I am writing this project for learning basic android components, Retrofit library and RestAPI.
 
 # Screen Views 
